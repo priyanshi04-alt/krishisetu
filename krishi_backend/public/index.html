@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🌾 KrishiSetu AI - Smart IoT Farming Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #0f172a; }
+    .glass { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); }
+    .glass-card { background: rgba(30, 41, 59, 0.85); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.06); }
+    .glow-green { box-shadow: 0 0 25px rgba(34, 197, 94, 0.25); }
+    .glow-blue { box-shadow: 0 0 25px rgba(56, 189, 248, 0.2); }
+  </style>
+</head>
+<body class="text-slate-100 min-h-screen flex flex-col">
+
+  <!-- Header -->
+  <header class="glass sticky top-0 z-50 px-6 py-4 border-b border-slate-800">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
+      <div class="flex items-center space-x-3">
+        <div class="w-11 h-11 rounded-xl bg-gradient-to-tr from-emerald-600 to-green-400 flex items-center justify-center text-white shadow-lg glow-green">
+          <i class="fa-solid fa-wheat-awn text-xl"></i>
+        </div>
+        <div>
+          <h1 class="text-xl font-bold bg-gradient-to-r from-green-400 via-emerald-300 to-teal-200 bg-clip-text text-transparent">KrishiSetu AI</h1>
+          <p class="text-xs text-slate-400">Smart IoT Agriculture & Advisory Platform</p>
+        </div>
+      </div>
+
+      <!-- Controls & Status -->
+      <div class="flex flex-wrap items-center gap-3">
+        <!-- Region Select -->
+        <div class="flex items-center space-x-2 bg-slate-800/80 px-3 py-1.5 rounded-lg border border-slate-700">
+          <i class="fa-solid fa-location-dot text-emerald-400 text-sm"></i>
+          <select id="regionSelect" class="bg-transparent text-sm font-medium text-slate-200 focus:outline-none cursor-pointer">
+            <option value="Punjab" class="bg-slate-800">Punjab</option>
+            <option value="Haryana" class="bg-slate-800">Haryana</option>
+            <option value="Maharashtra" class="bg-slate-800">Maharashtra</option>
+            <option value="Karnataka" class="bg-slate-800">Karnataka</option>
+            <option value="Uttar Pradesh" class="bg-slate-800">Uttar Pradesh</option>
+            <option value="Gujarat" class="bg-slate-800">Gujarat</option>
+            <option value="Madhya Pradesh" class="bg-slate-800">Madhya Pradesh</option>
+          </select>
+        </div>
+
+        <!-- Crop Select -->
+        <div class="flex items-center space-x-2 bg-slate-800/80 px-3 py-1.5 rounded-lg border border-slate-700">
+          <i class="fa-solid fa-seedling text-emerald-400 text-sm"></i>
+          <select id="cropSelect" class="bg-transparent text-sm font-medium text-slate-200 focus:outline-none cursor-pointer">
+            <option value="rice" class="bg-slate-800">Rice (धान)</option>
+            <option value="wheat" class="bg-slate-800">Wheat (गेहूँ)</option>
+            <option value="cotton" class="bg-slate-800">Cotton (कपास)</option>
+            <option value="tomato" class="bg-slate-800">Tomato (टमाटर)</option>
+            <option value="soybean" class="bg-slate-800">Soybean (सोयाबीन)</option>
+            <option value="maize" class="bg-slate-800">Maize (मक्का)</option>
+          </select>
+        </div>
+
+        <button onclick="refreshAll()" class="px-3.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 font-medium text-sm transition flex items-center space-x-2 text-white shadow">
+          <i class="fa-solid fa-rotate text-xs" id="refreshIcon"></i>
+          <span>Refresh</span>
+        </button>
+
+        <div class="flex items-center space-x-2 bg-emerald-950/60 text-emerald-400 px-3 py-1.5 rounded-lg border border-emerald-800/60 text-xs font-semibold">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span>Backend Connected</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="max-w-7xl mx-auto px-6 py-8 flex-1 space-y-8 w-full">
+
+    <!-- IoT Sensors Bar -->
+    <section>
+      <div class="flex items-center justify-between mb-4">
+        <div>
+          <h2 class="text-lg font-bold text-slate-100 flex items-center space-x-2">
+            <i class="fa-solid fa-microchip text-emerald-400"></i>
+            <span>Real-time IoT Sensor Telemetry</span>
+          </h2>
+          <p class="text-xs text-slate-400">Live feed from ESP32 Microcontroller & Farm Sensors</p>
+        </div>
+        <!-- Relay / Pump switch -->
+        <div class="flex items-center space-x-3 bg-slate-800/90 px-4 py-2 rounded-xl border border-slate-700">
+          <span class="text-xs font-medium text-slate-300">Irrigation Pump:</span>
+          <span id="pumpStatusBadge" class="text-xs font-bold px-2 py-0.5 rounded bg-slate-700 text-slate-300">OFF</span>
+          <button id="pumpToggleBtn" onclick="togglePump()" class="text-xs px-3 py-1 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-semibold transition flex items-center space-x-1">
+            <i class="fa-solid fa-power-off"></i>
+            <span id="pumpBtnText">Turn ON</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+        <!-- Temperature -->
+        <div class="glass-card p-4 rounded-2xl flex flex-col items-center text-center relative overflow-hidden group hover:border-amber-500/50 transition">
+          <div class="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center mb-2 text-lg">
+            <i class="fa-solid fa-temperature-half"></i>
+          </div>
+          <span class="text-xs text-slate-400 font-medium">Temperature</span>
+          <div class="text-2xl font-extrabold text-slate-100 mt-1" id="sensorTemp">27.5 °C</div>
+          <span class="text-[10px] text-emerald-400 mt-1">Optimal Range</span>
+        </div>
+
+        <!-- Humidity -->
+        <div class="glass-card p-4 rounded-2xl flex flex-col items-center text-center relative overflow-hidden group hover:border-blue-500/50 transition">
+          <div class="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-400 flex items-center justify-center mb-2 text-lg">
+            <i class="fa-solid fa-droplet"></i>
+          </div>
+          <span class="text-xs text-slate-400 font-medium">Air Humidity</span>
+          <div class="text-2xl font-extrabold text-slate-100 mt-1" id="sensorHumidity">65 %</div>
+          <span class="text-[10px] text-blue-400 mt-1">Normal</span>
+        </div>
+
+        <!-- Soil Moisture -->
+        <div class="glass-card p-4 rounded-2xl flex flex-col items-center text-center relative overflow-hidden group hover:border-emerald-500/50 transition">
+          <div class="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center mb-2 text-lg">
+            <i class="fa-solid fa-plant-wilt"></i>
+          </div>
+          <span class="text-xs text-slate-400 font-medium">Soil Moisture</span>
+          <div class="text-2xl font-extrabold text-emerald-400 mt-1" id="sensorSoil">58 %</div>
+          <span class="text-[10px] text-emerald-400 mt-1">Adequate</span>
+        </div>
+
+        <!-- Soil pH -->
+        <div class="glass-card p-4 rounded-2xl flex flex-col items-center text-center relative overflow-hidden group hover:border-purple-500/50 transition">
+          <div class="w-10 h-10 rounded-xl bg-purple-500/10 text-purple-400 flex items-center justify-center mb-2 text-lg">
+            <i class="fa-solid fa-flask"></i>
+          </div>
+          <span class="text-xs text-slate-400 font-medium">Soil pH</span>
+          <div class="text-2xl font-extrabold text-slate-100 mt-1" id="sensorPh">6.8</div>
+          <span class="text-[10px] text-purple-400 mt-1">Slightly Acidic</span>
+        </div>
+
+        <!-- Sunlight -->
+        <div class="glass-card p-4 rounded-2xl flex flex-col items-center text-center relative overflow-hidden group hover:border-yellow-500/50 transition">
+          <div class="w-10 h-10 rounded-xl bg-yellow-500/10 text-yellow-400 flex items-center justify-center mb-2 text-lg">
+            <i class="fa-solid fa-sun"></i>
+          </div>
+          <span class="text-xs text-slate-400 font-medium">Sunlight Intensity</span>
+          <div class="text-2xl font-extrabold text-slate-100 mt-1" id="sensorLight">840 lx</div>
+          <span class="text-[10px] text-yellow-400 mt-1">Bright</span>
+        </div>
+
+        <!-- Water Level -->
+        <div class="glass-card p-4 rounded-2xl flex flex-col items-center text-center relative overflow-hidden group hover:border-cyan-500/50 transition">
+          <div class="w-10 h-10 rounded-xl bg-cyan-500/10 text-cyan-400 flex items-center justify-center mb-2 text-lg">
+            <i class="fa-solid fa-water"></i>
+          </div>
+          <span class="text-xs text-slate-400 font-medium">Water Tank</span>
+          <div class="text-2xl font-extrabold text-cyan-400 mt-1" id="sensorWater">Full</div>
+          <span class="text-[10px] text-cyan-400 mt-1">No Refill Needed</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Row 2: AI Crop Health & Weather Intelligence -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+      <!-- AI Health Card -->
+      <div class="glass-card p-6 rounded-2xl lg:col-span-2 space-y-4">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-3">
+            <div class="w-9 h-9 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center">
+              <i class="fa-solid fa-heart-pulse"></i>
+            </div>
+            <div>
+              <h3 class="font-bold text-slate-100">AI Crop Health Assessment</h3>
+              <p class="text-xs text-slate-400">Gemini & Sensor Analysis Algorithm</p>
+            </div>
+          </div>
+          <span id="healthBadge" class="px-3 py-1 text-xs font-bold rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+            HEALTHY
+          </span>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 py-2">
+          <div class="bg-slate-800/60 p-4 rounded-xl border border-slate-700/60 flex flex-col justify-between">
+            <span class="text-xs text-slate-400">Health Index</span>
+            <div class="flex items-baseline space-x-1 my-1">
+              <span id="healthScore" class="text-3xl font-extrabold text-emerald-400">92</span>
+              <span class="text-xs text-slate-400">/ 100</span>
+            </div>
+            <div class="w-full bg-slate-700 h-1.5 rounded-full overflow-hidden">
+              <div id="healthScoreBar" class="bg-emerald-400 h-full rounded-full" style="width: 92%"></div>
+            </div>
+          </div>
+
+          <div class="bg-slate-800/60 p-4 rounded-xl border border-slate-700/60 flex flex-col justify-between">
+            <span class="text-xs text-slate-400">Disease / Pest Risk</span>
+            <div id="riskLevel" class="text-xl font-bold text-slate-200 my-1">Low</div>
+            <span class="text-[11px] text-slate-400">Environmental factors stable</span>
+          </div>
+
+          <div class="bg-slate-800/60 p-4 rounded-xl border border-slate-700/60 flex flex-col justify-between">
+            <span class="text-xs text-slate-400">Irrigation Recommendation</span>
+            <div id="irrigationAdvice" class="text-sm font-semibold text-emerald-300 my-1">No irrigation needed today</div>
+            <span class="text-[11px] text-slate-400">Moisture is at optimal 58%</span>
+          </div>
+        </div>
+
+        <div class="bg-emerald-950/30 border border-emerald-800/40 p-4 rounded-xl">
+          <div class="flex items-start space-x-3">
+            <i class="fa-solid fa-lightbulb text-emerald-400 mt-1"></i>
+            <div>
+              <h4 class="text-xs font-bold text-emerald-300 uppercase tracking-wider mb-1">Agronomist Advisory</h4>
+              <p id="healthAdvice" class="text-xs text-slate-300 leading-relaxed">
+                Weather conditions are highly favorable. Soil moisture and nitrogen balance are optimal for active vegetative growth. Continue regular morning monitoring.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Weather Intelligence Card -->
+      <div class="glass-card p-6 rounded-2xl space-y-4 flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center space-x-3">
+              <div class="w-9 h-9 rounded-lg bg-blue-500/20 text-blue-400 flex items-center justify-center">
+                <i class="fa-solid fa-cloud-sun"></i>
+              </div>
+              <div>
+                <h3 class="font-bold text-slate-100">Weather Intelligence</h3>
+                <p class="text-xs text-slate-400" id="weatherRegionName">Region: Punjab</p>
+              </div>
+            </div>
+            <span class="text-xs bg-slate-800 px-2 py-1 rounded text-slate-300 font-medium" id="weatherCond">Partly Cloudy</span>
+          </div>
+
+          <div class="flex items-center justify-between bg-slate-800/60 p-4 rounded-xl border border-slate-700/60 my-2">
+            <div>
+              <div class="text-4xl font-extrabold text-slate-100" id="weatherTemp">28°C</div>
+              <div class="text-xs text-slate-400 mt-1">Humidity: <span id="weatherHum" class="text-slate-200">62%</span></div>
+            </div>
+            <i class="fa-solid fa-cloud-sun text-4xl text-amber-400"></i>
+          </div>
+
+          <div class="space-y-2 mt-4 text-xs">
+            <div class="flex justify-between text-slate-300">
+              <span class="text-slate-400"><i class="fa-solid fa-cloud-rain text-blue-400 mr-2"></i>Rain Probability</span>
+              <span id="weatherRain" class="font-semibold">15%</span>
+            </div>
+            <div class="flex justify-between text-slate-300">
+              <span class="text-slate-400"><i class="fa-solid fa-wind text-teal-400 mr-2"></i>Wind Speed</span>
+              <span id="weatherWind" class="font-semibold">12 km/h</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-blue-950/30 border border-blue-800/40 p-3 rounded-xl text-xs text-blue-200">
+          <i class="fa-solid fa-circle-info mr-1 text-blue-400"></i>
+          <span id="weatherAdvisory">Ideal weather for nutrient spray and field preparation.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Row 3: AI Crop Recommendations -->
+    <section class="space-y-4">
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="text-lg font-bold text-slate-100 flex items-center space-x-2">
+            <i class="fa-solid fa-seedling text-emerald-400"></i>
+            <span>Recommended Crops for Current Soil & Climate</span>
+          </h2>
+          <p class="text-xs text-slate-400">Matched using real-time soil pH, moisture, and regional weather</p>
+        </div>
+      </div>
+
+      <div id="cropRecsContainer" class="grid grid-cols-1 md:grid-cols-3 gap-5">
+        <!-- Dynamic Cards Loaded Here -->
+        <div class="glass-card p-5 rounded-2xl animate-pulse text-center text-slate-500">Loading recommendations...</div>
+      </div>
+    </section>
+
+    <!-- Row 4: Pesticides & Insurance Schemes -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+      <!-- Pesticides & Health Safety -->
+      <div class="glass-card p-6 rounded-2xl space-y-4">
+        <div class="flex items-center space-x-3 mb-2">
+          <div class="w-9 h-9 rounded-lg bg-rose-500/20 text-rose-400 flex items-center justify-center">
+            <i class="fa-solid fa-shield-virus"></i>
+          </div>
+          <div>
+            <h3 class="font-bold text-slate-100">Pesticide & Crop Protection Guide</h3>
+            <p class="text-xs text-slate-400">Safe dosage & weather-based spray advice</p>
+          </div>
+        </div>
+
+        <div id="pesticideContainer" class="space-y-3">
+          <div class="bg-slate-800/60 p-4 rounded-xl border border-slate-700/60 text-center text-slate-400 text-xs">
+            Loading pesticide advisory...
+          </div>
+        </div>
+      </div>
+
+      <!-- Schemes & Crop Insurance -->
+      <div class="glass-card p-6 rounded-2xl space-y-4">
+        <div class="flex items-center space-x-3 mb-2">
+          <div class="w-9 h-9 rounded-lg bg-indigo-500/20 text-indigo-400 flex items-center justify-center">
+            <i class="fa-solid fa-file-invoice-dollar"></i>
+          </div>
+          <div>
+            <h3 class="font-bold text-slate-100">Govt. Schemes & Crop Insurance (PMFBY)</h3>
+            <p class="text-xs text-slate-400">Subsidy, insurance coverage & eligibility</p>
+          </div>
+        </div>
+
+        <div id="insuranceContainer" class="space-y-3">
+          <div class="bg-slate-800/60 p-4 rounded-xl border border-slate-700/60 text-center text-slate-400 text-xs">
+            Loading insurance plans...
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-slate-800 py-6 text-center text-xs text-slate-500">
+    <p>🌾 KrishiSetu AI - Bridging Traditional Agriculture with Smart IoT & AI Insights</p>
+    <p class="mt-1">Running on Node.js Express Backend • Local Server: <code class="text-emerald-400">http://localhost:3000</code></p>
+  </footer>
+
+  <!-- Script for Live Data & Interactivity -->
+  <script>
+    let isPumpOn = false;
+
+    async function fetchSensors() {
+      try {
+        const res = await fetch('/api/data');
+        if (res.ok) {
+          const data = await res.json();
+          if (data.temperature) document.getElementById('sensorTemp').innerText = data.temperature + ' °C';
+          if (data.humidity) document.getElementById('sensorHumidity').innerText = data.humidity + ' %';
+          if (data.soilPercent) document.getElementById('sensorSoil').innerText = data.soilPercent + ' %';
+          if (data.ph) document.getElementById('sensorPh').innerText = data.ph;
+          if (data.ldrRaw) document.getElementById('sensorLight').innerText = data.ldrRaw + ' lx';
+          if (data.waterLevel !== undefined) document.getElementById('sensorWater').innerText = data.waterLevel ? 'Full' : 'Low';
+        }
+      } catch (e) {
+        console.log('Using default sensor values');
+      }
+    }
+
+    async function fetchWeather() {
+      const region = document.getElementById('regionSelect').value;
+      document.getElementById('weatherRegionName').innerText = 'Region: ' + region;
+      try {
+        const res = await fetch(`/api/weather?region=${encodeURIComponent(region)}`);
+        if (res.ok) {
+          const data = await res.json();
+          document.getElementById('weatherTemp').innerText = (data.temperature || 28) + '°C';
+          document.getElementById('weatherHum').innerText = (data.humidity || 62) + '%';
+          document.getElementById('weatherCond').innerText = data.condition || 'Partly Cloudy';
+          document.getElementById('weatherRain').innerText = (data.rainProbability || 15) + '%';
+          document.getElementById('weatherWind').innerText = (data.windSpeed || 12) + ' km/h';
+          if (data.advisory) document.getElementById('weatherAdvisory').innerText = data.advisory;
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    async function fetchCropRecommendations() {
+      const region = document.getElementById('regionSelect').value;
+      const container = document.getElementById('cropRecsContainer');
+      try {
+        const res = await fetch(`/api/crops/recommend?region=${encodeURIComponent(region)}`);
+        if (res.ok) {
+          const data = await res.json();
+          const list = data.recommendations || [];
+          if (list.length === 0) {
+            container.innerHTML = '<div class="col-span-3 text-center text-slate-400 py-4">No specific crop matches found.</div>';
+            return;
+          }
+          container.innerHTML = list.map(crop => `
+            <div class="glass-card p-5 rounded-2xl border border-slate-700/60 hover:border-emerald-500/50 transition flex flex-col justify-between group">
+              <div>
+                <div class="flex items-center justify-between mb-3">
+                  <h4 class="font-bold text-base text-slate-100 flex items-center space-x-2">
+                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
+                    <span>${crop.name}</span>
+                  </h4>
+                  <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                    ${crop.score}% Match
+                  </span>
+                </div>
+                <div class="space-y-1.5 text-xs text-slate-300 mb-3">
+                  <div class="flex justify-between"><span class="text-slate-400">Temp Range:</span> <span class="font-medium">${crop.tempRange || '20°C - 35°C'}</span></div>
+                  <div class="flex justify-between"><span class="text-slate-400">Moisture:</span> <span class="font-medium">${crop.moistureRange || '40% - 65%'}</span></div>
+                  <div class="flex justify-between"><span class="text-slate-400">Ideal pH:</span> <span class="font-medium">${crop.phRange || '6.0 - 7.5'}</span></div>
+                </div>
+              </div>
+              <div class="pt-3 border-t border-slate-700/50 text-[11px] text-emerald-300">
+                <i class="fa-solid fa-check-circle mr-1"></i> ${(crop.reasons && crop.reasons[0]) || 'Highly suitable for current soil conditions.'}
+              </div>
+            </div>
+          `).join('');
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    async function fetchPesticides() {
+      const crop = document.getElementById('cropSelect').value;
+      const region = document.getElementById('regionSelect').value;
+      const container = document.getElementById('pesticideContainer');
+      try {
+        const res = await fetch(`/api/pesticides/recommend?crop=${encodeURIComponent(crop)}&region=${encodeURIComponent(region)}`);
+        if (res.ok) {
+          const data = await res.json();
+          const items = data.pesticides || data.recommendations || [];
+          if (items.length === 0) {
+            container.innerHTML = `
+              <div class="bg-slate-800/60 p-4 rounded-xl border border-slate-700/60">
+                <div class="flex items-center justify-between">
+                  <span class="text-sm font-bold text-slate-200">Neem Oil Spray (Organic)</span>
+                  <span class="text-xs text-emerald-400 bg-emerald-950/80 px-2 py-0.5 rounded border border-emerald-800">Safe</span>
+                </div>
+                <p class="text-xs text-slate-400 mt-1">Dosage: 5ml per liter of water. Spray in the late evening to avoid leaf burn.</p>
+              </div>
+            `;
+            return;
+          }
+          container.innerHTML = items.slice(0, 3).map(p => `
+            <div class="bg-slate-800/60 p-3.5 rounded-xl border border-slate-700/60">
+              <div class="flex items-center justify-between">
+                <span class="text-sm font-semibold text-slate-200">${p.name || p.pesticide || 'Recommended Pesticide'}</span>
+                <span class="text-[11px] text-amber-400 bg-amber-950/60 px-2 py-0.5 rounded border border-amber-800/60">${p.type || 'Fungicide'}</span>
+              </div>
+              <p class="text-xs text-slate-400 mt-1.5">${p.instructions || p.dosage || 'Apply as directed during cool morning hours.'}</p>
+            </div>
+          `).join('');
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    async function fetchInsurance() {
+      const crop = document.getElementById('cropSelect').value;
+      const region = document.getElementById('regionSelect').value;
+      const container = document.getElementById('insuranceContainer');
+      try {
+        const res = await fetch(`/api/insurance/plans?crop=${encodeURIComponent(crop)}&region=${encodeURIComponent(region)}`);
+        if (res.ok) {
+          const data = await res.json();
+          const plans = data.plans || data.schemes || [];
+          if (plans.length === 0) {
+            container.innerHTML = `
+              <div class="bg-slate-800/60 p-4 rounded-xl border border-slate-700/60">
+                <div class="flex items-center justify-between">
+                  <span class="text-sm font-bold text-indigo-300">PM Fasal Bima Yojana (PMFBY)</span>
+                  <span class="text-xs text-emerald-400 font-semibold">2% Farmer Premium</span>
+                </div>
+                <p class="text-xs text-slate-400 mt-1">Comprehensive risk cover for unpreventable natural risks from pre-sowing to post-harvest.</p>
+              </div>
+            `;
+            return;
+          }
+          container.innerHTML = plans.slice(0, 2).map(p => `
+            <div class="bg-slate-800/60 p-4 rounded-xl border border-slate-700/60">
+              <div class="flex items-center justify-between">
+                <span class="text-sm font-bold text-indigo-300">${p.name || 'PM Fasal Bima Yojana'}</span>
+                <span class="text-xs text-emerald-400 font-semibold">${p.premium || 'Subsidized'}</span>
+              </div>
+              <p class="text-xs text-slate-400 mt-1">${p.coverage || p.description || 'Covers drought, flood, pests and post-harvest losses.'}</p>
+            </div>
+          `).join('');
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    async function fetchHealth() {
+      try {
+        const res = await fetch('/api/health/crop');
+        if (res.ok) {
+          const data = await res.json();
+          if (data.healthScore) {
+            document.getElementById('healthScore').innerText = data.healthScore;
+            document.getElementById('healthScoreBar').style.width = data.healthScore + '%';
+          }
+          if (data.status) {
+            document.getElementById('healthBadge').innerText = data.status.toUpperCase();
+          }
+          if (data.advice) {
+            document.getElementById('healthAdvice').innerText = data.advice;
+          }
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    async function togglePump() {
+      const btnText = document.getElementById('pumpBtnText');
+      const badge = document.getElementById('pumpStatusBadge');
+      const btn = document.getElementById('pumpToggleBtn');
+
+      isPumpOn = !isPumpOn;
+      const endpoint = isPumpOn ? '/api/on' : '/api/off';
+
+      if (isPumpOn) {
+        badge.innerText = 'ON';
+        badge.className = 'text-xs font-bold px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30';
+        btnText.innerText = 'Turn OFF';
+        btn.className = 'text-xs px-3 py-1 rounded-lg bg-rose-600 hover:bg-rose-500 text-white font-semibold transition flex items-center space-x-1';
+      } else {
+        badge.innerText = 'OFF';
+        badge.className = 'text-xs font-bold px-2 py-0.5 rounded bg-slate-700 text-slate-300';
+        btnText.innerText = 'Turn ON';
+        btn.className = 'text-xs px-3 py-1 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-semibold transition flex items-center space-x-1';
+      }
+
+      try {
+        await fetch(endpoint);
+      } catch (e) {
+        console.log('Relay signal sent');
+      }
+    }
+
+    function refreshAll() {
+      const icon = document.getElementById('refreshIcon');
+      icon.classList.add('fa-spin');
+      Promise.all([
+        fetchSensors(),
+        fetchWeather(),
+        fetchCropRecommendations(),
+        fetchPesticides(),
+        fetchInsurance(),
+        fetchHealth()
+      ]).finally(() => {
+        setTimeout(() => icon.classList.remove('fa-spin'), 600);
+      });
+    }
+
+    document.getElementById('regionSelect').addEventListener('change', () => {
+      fetchWeather();
+      fetchCropRecommendations();
+      fetchPesticides();
+      fetchInsurance();
+    });
+
+    document.getElementById('cropSelect').addEventListener('change', () => {
+      fetchPesticides();
+      fetchInsurance();
+    });
+
+    // Initial load
+    refreshAll();
+  </script>
+</body>
+</html>

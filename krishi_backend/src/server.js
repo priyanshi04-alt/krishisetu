@@ -2,6 +2,7 @@ require('dotenv').config();
 
 const express = require('express');
 const cors = require('cors');
+const path = require('path');
 const connectDB = require('./config/db');
 const sensorRoutes = require('./routes/sensor.routes');
 const controlRoutes = require('./routes/control.routes');
@@ -36,9 +37,16 @@ app.use('/api/health', healthRoutes);
 app.use('/api/insurance', insuranceRoutes);
 app.use('/api/pesticides', pesticidesRoutes);
 
+// ── Serve Frontend Web Dashboard ─────────────────────────────────────────────
+app.use(express.static(path.join(__dirname, '../public')));
+
 // ── Health check ──────────────────────────────────────────────────────────────
-app.get('/', (req, res) => {
+app.get('/api/status', (req, res) => {
   res.json({ status: 'Krishi backend running', version: '1.0.0' });
+});
+
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, '../public/index.html'));
 });
 
 // ── 404 handler ───────────────────────────────────────────────────────────────
