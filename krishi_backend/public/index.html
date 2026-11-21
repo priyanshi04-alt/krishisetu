@@ -331,11 +331,15 @@
 
   <!-- Script for Live Data & Interactivity -->
   <script>
+    const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') 
+      ? '' 
+      : 'https://setu-backend-jixd.onrender.com';
+
     let isPumpOn = false;
 
     async function fetchSensors() {
       try {
-        const res = await fetch('/api/data');
+        const res = await fetch(`${API_BASE}/api/data`);
         if (res.ok) {
           const data = await res.json();
           if (data.temperature) document.getElementById('sensorTemp').innerText = data.temperature + ' °C';
@@ -354,7 +358,7 @@
       const region = document.getElementById('regionSelect').value;
       document.getElementById('weatherRegionName').innerText = 'Region: ' + region;
       try {
-        const res = await fetch(`/api/weather?region=${encodeURIComponent(region)}`);
+        const res = await fetch(`${API_BASE}/api/weather?region=${encodeURIComponent(region)}`);
         if (res.ok) {
           const data = await res.json();
           document.getElementById('weatherTemp').innerText = (data.temperature || 28) + '°C';
@@ -373,7 +377,7 @@
       const region = document.getElementById('regionSelect').value;
       const container = document.getElementById('cropRecsContainer');
       try {
-        const res = await fetch(`/api/crops/recommend?region=${encodeURIComponent(region)}`);
+        const res = await fetch(`${API_BASE}/api/crops/recommend?region=${encodeURIComponent(region)}`);
         if (res.ok) {
           const data = await res.json();
           const list = data.recommendations || [];
@@ -415,7 +419,7 @@
       const region = document.getElementById('regionSelect').value;
       const container = document.getElementById('pesticideContainer');
       try {
-        const res = await fetch(`/api/pesticides/recommend?crop=${encodeURIComponent(crop)}&region=${encodeURIComponent(region)}`);
+        const res = await fetch(`${API_BASE}/api/pesticides/recommend?crop=${encodeURIComponent(crop)}&region=${encodeURIComponent(region)}`);
         if (res.ok) {
           const data = await res.json();
           const items = data.pesticides || data.recommendations || [];
@@ -451,7 +455,7 @@
       const region = document.getElementById('regionSelect').value;
       const container = document.getElementById('insuranceContainer');
       try {
-        const res = await fetch(`/api/insurance/plans?crop=${encodeURIComponent(crop)}&region=${encodeURIComponent(region)}`);
+        const res = await fetch(`${API_BASE}/api/insurance/plans?crop=${encodeURIComponent(crop)}&region=${encodeURIComponent(region)}`);
         if (res.ok) {
           const data = await res.json();
           const plans = data.plans || data.schemes || [];
@@ -484,7 +488,7 @@
 
     async function fetchHealth() {
       try {
-        const res = await fetch('/api/health/crop');
+        const res = await fetch(`${API_BASE}/api/health/crop`);
         if (res.ok) {
           const data = await res.json();
           if (data.healthScore) {
@@ -509,7 +513,7 @@
       const btn = document.getElementById('pumpToggleBtn');
 
       isPumpOn = !isPumpOn;
-      const endpoint = isPumpOn ? '/api/on' : '/api/off';
+      const endpoint = isPumpOn ? `${API_BASE}/api/on` : `${API_BASE}/api/off`;
 
       if (isPumpOn) {
         badge.innerText = 'ON';
