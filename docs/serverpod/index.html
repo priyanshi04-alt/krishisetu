@@ -470,37 +470,63 @@
     let isPumpOn = false;
 
     async function fetchSensors() {
+      let data = null;
+
+      // 1. First priority: Direct ESP32 Access if phone/laptop is connected to ESP WiFi (192.168.4.1)
       try {
-        const res = await fetch(`${API_BASE}/api/data`);
-        if (res.ok) {
-          const data = await res.json();
-          if (data.temperature !== undefined && data.temperature !== null) document.getElementById('sensorTemp').innerText = data.temperature + ' °C';
-          if (data.humidity !== undefined && data.humidity !== null) document.getElementById('sensorHumidity').innerText = data.humidity + ' %';
-          if (data.soilPercent !== undefined && data.soilPercent !== null) {
-            document.getElementById('sensorSoil').innerText = data.soilPercent + ' %';
-            const soilStatus = document.getElementById('sensorSoilStatus');
-            if (soilStatus) {
-              if (data.soilPercent === 0 || data.soilPercent < 15) {
-                soilStatus.innerText = 'Dry / In Air';
-                soilStatus.className = 'text-[10px] text-amber-400 mt-1';
-              } else if (data.soilPercent < 30) {
-                soilStatus.innerText = 'Needs Water';
-                soilStatus.className = 'text-[10px] text-amber-400 mt-1';
-              } else if (data.soilPercent <= 70) {
-                soilStatus.innerText = 'Adequate';
-                soilStatus.className = 'text-[10px] text-emerald-400 mt-1';
-              } else {
-                soilStatus.innerText = 'Very Wet';
-                soilStatus.className = 'text-[10px] text-blue-400 mt-1';
+        const espRes = await fetch('http://192.168.4.1/data', { signal: AbortSignal.timeout(1200) });
+        if (espRes.ok) {
+          data = await espRes.json();
+        }
+      } catch (err) {
+        // Fallback to backend API
+      }
+
+      // 2. Second priority: Local backend (http://localhost:3000) or Cloud backend
+      if (!data) {
+        try {
+          const res = await fetch(`${API_BASE}/api/data`, { signal: AbortSignal.timeout(2000) });
+          if (res.ok) {
+            data = await res.json();
+          }
+        } catch (err) {
+          // If on GitHub Pages, try localhost:3000 as direct fallback
+          if (API_BASE !== '') {
+            try {
+              const localRes = await fetch('http://localhost:3000/api/data', { signal: AbortSignal.timeout(1200) });
+              if (localRes.ok) {
+                data = await localRes.json();
               }
+            } catch (e2) {}
+          }
+        }
+      }
+
+      if (data && !data.error) {
+        if (data.temperature !== undefined && data.temperature !== null) document.getElementById('sensorTemp').innerText = data.temperature + ' °C';
+        if (data.humidity !== undefined && data.humidity !== null) document.getElementById('sensorHumidity').innerText = data.humidity + ' %';
+        if (data.soilPercent !== undefined && data.soilPercent !== null) {
+          document.getElementById('sensorSoil').innerText = data.soilPercent + ' %';
+          const soilStatus = document.getElementById('sensorSoilStatus');
+          if (soilStatus) {
+            if (data.soilPercent === 0 || data.soilPercent < 15) {
+              soilStatus.innerText = 'Dry / In Air';
+              soilStatus.className = 'text-[10px] text-amber-400 mt-1';
+            } else if (data.soilPercent < 30) {
+              soilStatus.innerText = 'Needs Water';
+              soilStatus.className = 'text-[10px] text-amber-400 mt-1';
+            } else if (data.soilPercent <= 70) {
+              soilStatus.innerText = 'Adequate';
+              soilStatus.className = 'text-[10px] text-emerald-400 mt-1';
+            } else {
+              soilStatus.innerText = 'Very Wet';
+              soilStatus.className = 'text-[10px] text-blue-400 mt-1';
             }
           }
-          if (data.ph !== undefined && data.ph !== null) document.getElementById('sensorPh').innerText = data.ph;
-          if (data.ldrRaw !== undefined && data.ldrRaw !== null) document.getElementById('sensorLight').innerText = data.ldrRaw + ' lx';
-          if (data.waterLevel !== undefined) document.getElementById('sensorWater').innerText = data.waterLevel ? 'Full' : 'Low';
         }
-      } catch (e) {
-        console.log('Using default sensor values');
+        if (data.ph !== undefined && data.ph !== null) document.getElementById('sensorPh').innerText = data.ph;
+        if (data.ldrRaw !== undefined && data.ldrRaw !== null) document.getElementById('sensorLight').innerText = data.ldrRaw + ' lx';
+        if (data.waterLevel !== undefined) document.getElementById('sensorWater').innerText = data.waterLevel ? 'Full' : 'Low';
       }
     }
 
