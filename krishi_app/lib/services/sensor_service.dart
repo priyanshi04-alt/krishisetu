@@ -1,10 +1,5 @@
-import 'dart:convert';
-import 'package:flutter/foundation.dart' show kIsWeb;
-import 'package:http/http.dart' as http;
-
-// Web: use 127.0.0.1 (localhost can fail in some browsers due to CORS quirks)
-// Mobile/device: use your machine's LAN IP
-String get _baseUrl => 'https://krishisetu.api.serverpod.space';
+import '../models/sensor_telemetry.dart';
+import 'sensor_repository.dart';
 
 class SensorData {
   final double temperature;
@@ -15,6 +10,8 @@ class SensorData {
   final bool waterLevel;
   final bool relay;
   final bool autoMode;
+  final bool isLive;
+  final DateTime timestamp;
 
   const SensorData({
     required this.temperature,
@@ -25,87 +22,38 @@ class SensorData {
     required this.waterLevel,
     required this.relay,
     required this.autoMode,
+    this.isLive = false,
+    required this.timestamp,
   });
 
-  factory SensorData.fromJson(Map<String, dynamic> json) {
+  factory SensorData.fromTelemetry(SensorTelemetry t) {
     return SensorData(
-      temperature: _toDouble(json['temperature']),
-      humidity:    _toDouble(json['humidity']),
-      soilPercent: _toDouble(json['soilPercent']),
-      ldrRaw:      _toDouble(json['ldrRaw']),
-      ph:          _toDouble(json['ph']),
-      // ESP32 may send booleans as true/false OR as 1/0 integers
-      waterLevel:  _toBool(json['waterLevel']),
-      relay:       _toBool(json['relay']),
-      autoMode:    _toBool(json['autoMode']),
+      temperature: t.temperature,
+      humidity: t.humidity,
+      soilPercent: t.soilMoisture,
+      ldrRaw: t.sunlight,
+      ph: t.soilPH,
+      waterLevel: t.waterLevel,
+      relay: t.pumpStatus,
+      autoMode: t.autoMode,
+      isLive: t.isLive,
+      timestamp: t.timestamp,
     );
-  }
-
-  /// Safely convert num → double regardless of whether JSON gives int or double
-  static double _toDouble(dynamic v) {
-    if (v == null) return 0.0;
-    return (v as num).toDouble();
-  }
-
-  /// Safely convert bool OR int (0/1) → bool
-  static bool _toBool(dynamic v) {
-    if (v == null) return false;
-    if (v is bool) return v;
-    if (v is int) return v != 0;
-    if (v is String) return v == '1' || v.toLowerCase() == 'true';
-    return false;
   }
 }
 
 class SensorService {
-  static const _timeout = Duration(seconds: 5);
-  static bool _simulatedPump = false;
+  static final SensorRepository _repo = SensorRepository();
 
   static Future<SensorData> fetchData() async {
-    try {
-      final res = await http
-          .get(Uri.parse('$_baseUrl/api/data'))
-          .timeout(_timeout);
-
-      if (res.statusCode == 200) {
-        return SensorData.fromJson(jsonDecode(res.body));
-      }
-      return _fallbackData();
-    } catch (e) {
-      // Fallback sensor demo values for live web preview
-      return _fallbackData();
-    }
-  }
-
-  static SensorData _fallbackData() {
-    return SensorData(
-      temperature: 28.4,
-      humidity: 65.0,
-      soilPercent: 54.0,
-      ldrRaw: 720.0,
-      ph: 6.8,
-      waterLevel: true,
-      relay: _simulatedPump,
-      autoMode: true,
-    );
+    return SensorData.fromTelemetry(_repo.currentTelemetry);
   }
 
   static Future<void> pumpOn() async {
-    _simulatedPump = true;
-    try {
-      await http.get(Uri.parse('$_baseUrl/api/on')).timeout(_timeout);
-    } catch (_) {}
+    await _repo.setPump(true);
   }
 
   static Future<void> pumpOff() async {
-    _simulatedPump = false;
-    try {
-      await http.get(Uri.parse('$_baseUrl/api/off')).timeout(_timeout);
-    } catch (_) {}
+    await _repo.setPump(false);
   }
-}
-
-class DeviceOfflineException implements Exception {
-  @override
-  String toString() => 'Device not connected';
 }

@@ -9,6 +9,8 @@ import '../widgets/weather_card.dart';
 import '../widgets/crop_recommendation_card.dart';
 import '../widgets/crop_health_card.dart';
 import '../services/sensor_service.dart';
+import '../services/sensor_repository.dart';
+import '../models/sensor_telemetry.dart';
 import '../services/session.dart';
 import '../services/auth_service.dart';
 import 'alerts_screen.dart';
@@ -43,6 +45,7 @@ class _DashboardScreenState extends State<DashboardScreen>
   @override
   void initState() {
     super.initState();
+    SensorRepository().start();
     _pumpCtrl = AnimationController(
         vsync: this, duration: const Duration(milliseconds: 900))
       ..repeat(reverse: true);
@@ -78,6 +81,7 @@ class _DashboardScreenState extends State<DashboardScreen>
   @override
   void dispose() {
     _pumpCtrl.dispose();
+    SensorRepository().stop();
     _refreshTimer?.cancel();
     _pumpLockTimer?.cancel();
     super.dispose();
@@ -99,16 +103,18 @@ class _DashboardScreenState extends State<DashboardScreen>
                 waterLevel:  data.waterLevel,
                 relay:       _data!.relay, // keep local value
                 autoMode:    data.autoMode,
+                isLive:      data.isLive,
+                timestamp:   data.timestamp,
               )
             : data;
         _loading = false;
         _offline = false;
       });
-    } on DeviceOfflineException {
+    } catch (_) {
       if (!mounted) return;
       setState(() {
         _loading = false;
-        _offline = true;
+        _offline = false;
       });
     }
   }
@@ -135,6 +141,8 @@ class _DashboardScreenState extends State<DashboardScreen>
         waterLevel:  _data!.waterLevel,
         relay:       turnOn,
         autoMode:    _data!.autoMode,
+        isLive:      _data!.isLive,
+        timestamp:   DateTime.now(),
       );
     });
 
@@ -157,6 +165,8 @@ class _DashboardScreenState extends State<DashboardScreen>
           waterLevel:  _data!.waterLevel,
           relay:       !turnOn, // revert
           autoMode:    _data!.autoMode,
+          isLive:      _data!.isLive,
+          timestamp:   DateTime.now(),
         );
       });
       _pumpLocked = false;
@@ -354,51 +364,8 @@ class _DashboardScreenState extends State<DashboardScreen>
       );
     }
 
-    // Offline state
-    if (_offline) {
-      return Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(Icons.wifi_off_rounded,
-                color: const Color(0xFFEF5350), size: 48),
-            const SizedBox(height: 14),
-            Text('Device not connected',
-                style: GoogleFonts.inter(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w700,
-                    color: const Color(0xFFEF5350))),
-            const SizedBox(height: 6),
-            Text('Make sure the ESP32 and backend are running',
-                style: TextStyle(
-                    color: AppColors.textSub(context), fontSize: 12)),
-            const SizedBox(height: 20),
-            GestureDetector(
-              onTap: () {
-                setState(() => _loading = true);
-                _fetchData();
-              },
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 24, vertical: 10),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                      color: const Color(0xFFEF5350).withOpacity(0.5)),
-                  color: const Color(0xFFEF5350).withOpacity(0.1),
-                ),
-                child: const Text('Retry',
-                    style: TextStyle(
-                        color: Color(0xFFEF5350),
-                        fontWeight: FontWeight.w700)),
-              ),
-            ),
-          ],
-        ),
-      );
-    }
-
-    final d = _data!;
+    final d = _data ?? SensorData.fromTelemetry(SensorTelemetry.demo());
+    final isLive = d.isLive;
     final moisture = d.soilPercent;
     final moistureColor =
         moisture < 30 ? const Color(0xFFEF5350) : const Color(0xFF66BB6A);
@@ -408,8 +375,84 @@ class _DashboardScreenState extends State<DashboardScreen>
     return ListView(
       padding: const EdgeInsets.symmetric(horizontal: 18),
       children: [
+        // ── Connection Status Banner ──────────────────────────
+        Container(
+          margin: const EdgeInsets.only(bottom: 14),
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
+          decoration: BoxDecoration(
+            color: isLive
+                ? const Color(0xFF2E7D32).withOpacity(0.12)
+                : const Color(0xFFFF9800).withOpacity(0.12),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: isLive
+                  ? const Color(0xFF4CAF50).withOpacity(0.4)
+                  : const Color(0xFFFF9800).withOpacity(0.4),
+            ),
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 10,
+                height: 10,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: isLive ? const Color(0xFF4CAF50) : const Color(0xFFFF9800),
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      isLive ? 'LIVE TELEMETRY ACTIVE' : 'DEMO MODE (ESP32 Offline)',
+                      style: GoogleFonts.inter(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w700,
+                        color: isLive ? const Color(0xFF81C784) : const Color(0xFFFFB74D),
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      isLive
+                          ? 'Streaming live field telemetry from ESP32 • Auto-refreshing'
+                          : 'Showing deterministic demo readings • Switches to Live automatically on telemetry',
+                      style: TextStyle(
+                        fontSize: 10.5,
+                        color: AppColors.textSub(context),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: isLive
+                      ? const Color(0xFF4CAF50).withOpacity(0.2)
+                      : const Color(0xFFFF9800).withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  isLive ? 'LIVE' : 'DEMO DATA',
+                  style: GoogleFonts.inter(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w800,
+                    color: isLive ? const Color(0xFF81C784) : const Color(0xFFFFB74D),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+
         // ── Sensor tiles ──────────────────────────────────
-        _SectionLabel(label: 'Live Sensors', context: context),
+        _SectionLabel(
+          label: isLive ? 'Live Sensors' : 'Sensors (Demo Simulation)',
+          context: context,
+        ),
         const SizedBox(height: 10),
         GridView.count(
           crossAxisCount: 2,
