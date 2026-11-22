@@ -736,6 +736,13 @@
     // Initial load
     initTheme();
     refreshAll();
+
+    // Auto-refresh sensor data every 3 seconds (real-time IoT)
+    setInterval(fetchSensors, 3000);
+
+    // Auto-refresh weather + health every 30 seconds
+    setInterval(fetchWeather, 30000);
+    setInterval(fetchHealth, 30000);
   </script>
 </body>
 </html>

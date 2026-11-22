@@ -1,0 +1,44 @@
+services:
+  # Development services
+  postgres:
+    image: pgvector/pgvector:pg16
+    ports:
+      - "8090:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_DB: krishisetu
+      POSTGRES_PASSWORD: "NbKI4NczCdsQnjTFGbqazQlNoJrwp4wz"
+    volumes:
+      - krishisetu_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:6.2.6
+    ports:
+      - "8091:6379"
+    command: redis-server --requirepass "BGlUUoZxJTSKLz1iqAvnvGM3U2C3yQAA"
+    environment:
+      - REDIS_REPLICATION_MODE=master
+
+  # Test services
+  postgres_test:
+    image: pgvector/pgvector:pg16
+    ports:
+      - "9090:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_DB: krishisetu_test
+      POSTGRES_PASSWORD: "Kw0UhptLi1a80hOUfWGpr1_AaOMm2wnX"
+    volumes:
+      - krishisetu_test_data:/var/lib/postgresql/data
+
+  redis_test:
+    image: redis:6.2.6
+    ports:
+      - "9091:6379"
+    command: redis-server --requirepass "x2P5e2ApDDcktvoh5nr40BVTpy2EE8X6"
+    environment:
+      - REDIS_REPLICATION_MODE=master
+
+volumes:
+  krishisetu_data:
+  krishisetu_test_data:
