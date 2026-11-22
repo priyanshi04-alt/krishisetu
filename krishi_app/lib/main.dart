@@ -2,6 +2,7 @@
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'screens/home_screen.dart';
+import 'screens/dashboard_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -37,7 +38,7 @@ class _KrishiAppState extends State<KrishiApp> {
       themeMode: isDark ? ThemeMode.dark : ThemeMode.light,
       darkTheme: _buildDarkTheme(),
       theme: _buildLightTheme(),
-      home: const HomeScreen(),
+      home: const DashboardScreen(username: 'Farmer Priyanshi'),
     );
   }
 
