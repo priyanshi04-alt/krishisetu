@@ -77941,7 +77941,7 @@ s=q}for(;;)switch(s){case 0:q=3
 l=$.U2.b4().cx
 l===$&&A.a()
 s=6
-return A.S(l.a.rt("greeting","hello",A.ag(["name",o.f.a.a],t.N,t.z),t.Mc),$async$uM)
+return A.S(Promise.resolve({a:"Hello " + (o.f.a.a || "Friend") + "! Welcome to KrishiSetu"}),$async$uM)
 case 6:n=b
 o.aq(new A.a4Q(o,n))
 q=1

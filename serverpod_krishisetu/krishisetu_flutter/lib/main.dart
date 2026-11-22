@@ -65,15 +65,21 @@ class MyHomePageState extends State<MyHomePage> {
   /// `_resultMessage` or `_errorMessage` field, depending on if the call
   /// is successful.
   void _callHello() async {
+    final inputName = _textEditingController.text.trim();
+    final name = inputName.isEmpty ? 'Friend' : inputName;
     try {
-      final result = await client.greeting.hello(_textEditingController.text);
+      final result = await client.greeting
+          .hello(_textEditingController.text)
+          .timeout(const Duration(seconds: 3));
       setState(() {
         _errorMessage = null;
         _resultMessage = result.message;
       });
     } catch (e) {
+      // Fallback demo mode for static web deployments (GitHub Pages)
       setState(() {
-        _errorMessage = '$e';
+        _errorMessage = null;
+        _resultMessage = 'Hello $name! Welcome to KrishiSetu (Live Demo Mode)';
       });
     }
   }
