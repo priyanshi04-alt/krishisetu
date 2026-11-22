@@ -26,7 +26,7 @@ class KrishiApp extends StatefulWidget {
 }
 
 class _KrishiAppState extends State<KrishiApp> {
-  bool isDark = true;
+  bool isDark = false; // Default to White / Light Mode in sync with app & serverpod
 
   void toggleTheme() => setState(() => isDark = !isDark);
 
