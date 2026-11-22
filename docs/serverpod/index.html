@@ -182,155 +182,157 @@
 <body class="text-slate-100 min-h-screen flex flex-col">
 
   <!-- FULL SCREEN DEDICATED LOGIN / WELCOME SCREEN (When Logged Out) -->
-  <div id="fullAuthScreen" class="fixed inset-0 z-[100] bg-slate-950 flex flex-col justify-center items-center p-6 hidden">
-    <!-- Ambient Background Glows -->
-    <div class="absolute -top-32 -left-32 w-96 h-96 bg-emerald-500/15 rounded-full blur-3xl pointer-events-none"></div>
-    <div class="absolute -bottom-32 -right-32 w-96 h-96 bg-teal-500/15 rounded-full blur-3xl pointer-events-none"></div>
+  <div id="fullAuthScreen" class="fixed inset-0 z-[100] bg-[#060E08] flex flex-col justify-between items-center p-6 text-white overflow-y-auto hidden">
+    <!-- Top Header Bar of App Welcome -->
+    <div class="w-full max-w-2xl flex items-center justify-between pt-2">
+      <div class="flex items-center space-x-2">
+        <i class="fa-solid fa-leaf text-emerald-400 text-lg"></i>
+        <span class="text-lg font-bold text-slate-100 tracking-wide">Krishi</span>
+      </div>
+      <button onclick="toggleTheme()" class="px-3.5 py-1 rounded-full border border-emerald-500/40 bg-emerald-950/40 text-emerald-300 text-xs font-semibold flex items-center space-x-1.5 hover:bg-emerald-900/50 transition">
+        <i class="fa-solid fa-sun text-amber-300 text-xs"></i>
+        <span>Light</span>
+      </button>
+    </div>
 
-    <div class="max-w-md w-full glass-card p-8 rounded-3xl border border-slate-800 shadow-2xl relative z-10 space-y-6">
-      <!-- App Brand Logo -->
-      <div class="text-center space-y-2">
-        <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-emerald-500 to-teal-400 mx-auto flex items-center justify-center text-white text-3xl shadow-xl glow-green">
-          <i class="fa-solid fa-wheat-awn"></i>
-        </div>
-        <h1 class="text-2xl font-extrabold bg-gradient-to-r from-green-400 via-emerald-300 to-teal-200 bg-clip-text text-transparent">KrishiSetu AI</h1>
-        <p class="text-xs text-slate-400">Smart IoT Agriculture & Farm Monitoring Platform</p>
+    <!-- Center Hero Branding Content -->
+    <div class="w-full max-w-md mx-auto my-auto py-8 text-center space-y-6">
+      <!-- Badge: Smart Farming Platform -->
+      <div class="inline-flex items-center space-x-2 px-3.5 py-1 rounded-full bg-emerald-950/80 border border-emerald-500/30 text-emerald-400 text-xs font-medium">
+        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+        <span>Smart Farming Platform</span>
       </div>
 
-      <!-- Auth Mode Toggle Tabs (Sign In / Register) -->
-      <div class="flex bg-slate-800/80 p-1 rounded-xl border border-slate-700 text-xs font-semibold">
-        <button id="authTabLogin" onclick="switchAuthMode('login')" class="flex-1 py-2 rounded-lg bg-emerald-600 text-white transition flex items-center justify-center space-x-1.5 shadow">
-          <i class="fa-solid fa-right-to-bracket"></i>
-          <span>Existing Farmer</span>
-        </button>
-        <button id="authTabSignup" onclick="switchAuthMode('signup')" class="flex-1 py-2 rounded-lg text-slate-400 hover:text-white transition flex items-center justify-center space-x-1.5">
-          <i class="fa-solid fa-user-plus"></i>
-          <span>New Farmer (Sign Up)</span>
-        </button>
+      <!-- Main Headline -->
+      <div class="space-y-2">
+        <h1 class="text-4xl md:text-5xl font-extrabold text-emerald-400 tracking-tight">
+          Krishi App
+        </h1>
+        <p class="text-slate-300 text-base md:text-lg font-medium">
+          Smart Farming for<br>Every Farmer
+        </p>
       </div>
 
-      <!-- FORM 1: EXISTING FARMER LOGIN -->
-      <div id="authLoginForm" class="space-y-4 pt-1">
-        <div>
-          <label class="text-xs font-semibold text-slate-300 block mb-1.5 flex items-center space-x-1.5">
-            <i class="fa-solid fa-user text-emerald-400"></i>
-            <span>Farmer Name / Kisan ID</span>
-          </label>
-          <input type="text" id="authFarmerName" value="Ramesh Kumar (Farmer)" class="w-full bg-slate-800/90 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-slate-100 focus:outline-none focus:border-emerald-500" placeholder="Enter your full name">
-        </div>
-
-        <div>
-          <label class="text-xs font-semibold text-slate-300 block mb-1.5 flex items-center space-x-1.5">
-            <i class="fa-solid fa-lock text-emerald-400"></i>
-            <span>Password / PIN</span>
-          </label>
-          <input type="password" id="authPassword" value="123456" class="w-full bg-slate-800/90 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-slate-100 focus:outline-none focus:border-emerald-500" placeholder="Enter password">
-        </div>
-
-        <div class="grid grid-cols-2 gap-3 pt-1">
-          <div>
-            <label class="text-[11px] font-medium text-slate-400 block mb-1">State / Region</label>
-            <select id="authRegion" class="w-full bg-slate-800/90 border border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none">
-              <option value="Punjab">Punjab</option>
-              <option value="Haryana">Haryana</option>
-              <option value="Maharashtra">Maharashtra</option>
-              <option value="Karnataka">Karnataka</option>
-              <option value="Uttar Pradesh">Uttar Pradesh</option>
-              <option value="Gujarat">Gujarat</option>
-            </select>
-          </div>
-          <div>
-            <label class="text-[11px] font-medium text-slate-400 block mb-1">Active Crop</label>
-            <select id="authCrop" class="w-full bg-slate-800/90 border border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none">
-              <option value="rice">Rice (धान)</option>
-              <option value="wheat">Wheat (गेहूँ)</option>
-              <option value="cotton">Cotton (कपास)</option>
-              <option value="tomato">Tomato (टमाटर)</option>
-            </select>
-          </div>
-        </div>
-
-        <button onclick="handleFullLogin()" class="w-full py-3 bg-gradient-to-r from-emerald-600 to-green-500 hover:from-emerald-500 hover:to-green-400 text-white rounded-xl text-sm font-bold transition shadow-lg glow-green flex items-center justify-center space-x-2 mt-4 cursor-pointer">
-          <i class="fa-solid fa-arrow-right-to-bracket"></i>
-          <span>Sign In to Dashboard</span>
-        </button>
+      <!-- Feature Tags Row -->
+      <div class="flex flex-wrap items-center justify-center gap-2 pt-2">
+        <span class="px-3 py-1 rounded-full bg-slate-900/80 border border-slate-800 text-[11px] text-slate-300 flex items-center space-x-1.5">
+          <i class="fa-solid fa-sun text-emerald-400 text-xs"></i>
+          <span>Weather AI</span>
+        </span>
+        <span class="px-3 py-1 rounded-full bg-slate-900/80 border border-slate-800 text-[11px] text-slate-300 flex items-center space-x-1.5">
+          <i class="fa-solid fa-droplet text-emerald-400 text-xs"></i>
+          <span>Irrigation</span>
+        </span>
+        <span class="px-3 py-1 rounded-full bg-slate-900/80 border border-slate-800 text-[11px] text-slate-300 flex items-center space-x-1.5">
+          <i class="fa-solid fa-chart-simple text-emerald-400 text-xs"></i>
+          <span>Crop Analytics</span>
+        </span>
+        <span class="px-3 py-1 rounded-full bg-slate-900/80 border border-slate-800 text-[11px] text-slate-300 flex items-center space-x-1.5">
+          <i class="fa-solid fa-bell text-emerald-400 text-xs"></i>
+          <span>Smart Alerts</span>
+        </span>
       </div>
 
-      <!-- FORM 2: NEW USER SIGN UP -->
-      <div id="authSignupForm" class="space-y-3.5 pt-1 hidden">
-        <div>
-          <label class="text-xs font-semibold text-slate-300 block mb-1 flex items-center space-x-1.5">
-            <i class="fa-solid fa-id-card text-emerald-400"></i>
-            <span>Full Name</span>
-          </label>
-          <input type="text" id="signupName" class="w-full bg-slate-800/90 border border-slate-700 rounded-xl px-3.5 py-2 text-xs text-slate-100 focus:outline-none focus:border-emerald-500" placeholder="e.g. Suresh Patel">
+      <!-- Action Buttons & Panels Container -->
+      <div class="pt-4 space-y-3">
+        <!-- Main Hero Action Buttons (Exact Match to App Screenshot) -->
+        <div id="authHeroButtons" class="space-y-3">
+          <button onclick="showAuthForm('signup')" class="w-full py-3.5 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-base transition shadow-lg glow-green flex items-center justify-center space-x-2 cursor-pointer">
+            <span>→ Get Started</span>
+          </button>
+          <button onclick="showAuthForm('login')" class="w-full py-3.5 rounded-2xl bg-transparent hover:bg-emerald-950/40 border-2 border-emerald-500/70 text-emerald-400 font-bold text-base transition flex items-center justify-center cursor-pointer">
+            <span>Login to Account</span>
+          </button>
         </div>
 
-        <div class="grid grid-cols-2 gap-3">
-          <div>
-            <label class="text-xs font-semibold text-slate-300 block mb-1">Email / Mobile</label>
-            <input type="text" id="signupEmail" class="w-full bg-slate-800/90 border border-slate-700 rounded-xl px-3.5 py-2 text-xs text-slate-100 focus:outline-none focus:border-emerald-500" placeholder="suresh@gmail.com">
+        <!-- Embedded Interactive Login/Signup Panel -->
+        <div id="authInteractivePanel" class="hidden glass-card p-5 rounded-2xl border border-slate-700 text-left space-y-4">
+          <div class="flex items-center justify-between pb-2 border-b border-slate-700/60">
+            <h4 class="text-sm font-bold text-emerald-400" id="authPanelTitle">Farmer Login</h4>
+            <button onclick="hideAuthForm()" class="text-xs text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i> Back</button>
           </div>
-          <div>
-            <label class="text-xs font-semibold text-slate-300 block mb-1">Password</label>
-            <input type="password" id="signupPass" class="w-full bg-slate-800/90 border border-slate-700 rounded-xl px-3.5 py-2 text-xs text-slate-100 focus:outline-none focus:border-emerald-500" placeholder="Min 6 characters">
+
+          <!-- Existing Farmer Form -->
+          <div id="authLoginForm" class="space-y-3 text-xs">
+            <div>
+              <label class="font-semibold text-slate-300 block mb-1">Kisan Name / ID</label>
+              <input type="text" id="authFarmerName" value="Ramesh Kumar (Farmer)" class="w-full bg-slate-800/90 border border-slate-700 rounded-xl px-3 py-2 text-slate-100 focus:outline-none focus:border-emerald-500" placeholder="e.g. Ramesh Kumar">
+            </div>
+            <div>
+              <label class="font-semibold text-slate-300 block mb-1">PIN / Password</label>
+              <input type="password" id="authPassword" value="123456" class="w-full bg-slate-800/90 border border-slate-700 rounded-xl px-3 py-2 text-slate-100 focus:outline-none focus:border-emerald-500" placeholder="Password">
+            </div>
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <label class="text-[10px] text-slate-400 block mb-0.5">Region</label>
+                <select id="authRegion" class="w-full bg-slate-800/90 border border-slate-700 rounded-lg px-2 py-1.5 text-xs text-slate-200 focus:outline-none">
+                  <option value="Punjab">Punjab</option>
+                  <option value="Haryana">Haryana</option>
+                  <option value="Maharashtra">Maharashtra</option>
+                  <option value="Karnataka">Karnataka</option>
+                  <option value="Uttar Pradesh">Uttar Pradesh</option>
+                </select>
+              </div>
+              <div>
+                <label class="text-[10px] text-slate-400 block mb-0.5">Crop</label>
+                <select id="authCrop" class="w-full bg-slate-800/90 border border-slate-700 rounded-lg px-2 py-1.5 text-xs text-slate-200 focus:outline-none">
+                  <option value="rice">Rice (धान)</option>
+                  <option value="wheat">Wheat (गेहूँ)</option>
+                  <option value="cotton">Cotton (कपास)</option>
+                </select>
+              </div>
+            </div>
+            <button onclick="handleFullLogin()" class="w-full py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold transition">
+              Sign In to Farm Dashboard →
+            </button>
+          </div>
+
+          <!-- New Farmer Form -->
+          <div id="authSignupForm" class="space-y-3 text-xs hidden">
+            <div>
+              <label class="font-semibold text-slate-300 block mb-1">Full Name</label>
+              <input type="text" id="signupName" class="w-full bg-slate-800/90 border border-slate-700 rounded-xl px-3 py-2 text-slate-100 focus:outline-none focus:border-emerald-500" placeholder="e.g. Suresh Patel">
+            </div>
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <label class="font-semibold text-slate-300 block mb-1">State</label>
+                <select id="signupRegion" class="w-full bg-slate-800/90 border border-slate-700 rounded-lg px-2 py-1.5 text-xs text-slate-200">
+                  <option value="Punjab">Punjab</option>
+                  <option value="Haryana">Haryana</option>
+                  <option value="Maharashtra">Maharashtra</option>
+                  <option value="Karnataka">Karnataka</option>
+                  <option value="Uttar Pradesh">Uttar Pradesh</option>
+                </select>
+              </div>
+              <div>
+                <label class="font-semibold text-slate-300 block mb-1">Crop</label>
+                <select id="signupCrop" class="w-full bg-slate-800/90 border border-slate-700 rounded-lg px-2 py-1.5 text-xs text-slate-200">
+                  <option value="wheat">Wheat (गेहूँ)</option>
+                  <option value="rice">Rice (धान)</option>
+                  <option value="cotton">Cotton (कपास)</option>
+                </select>
+              </div>
+            </div>
+            <div>
+              <label class="font-semibold text-slate-300 block mb-1">Farm Land Size</label>
+              <select id="signupLand" class="w-full bg-slate-800/90 border border-slate-700 rounded-lg px-2 py-1.5 text-xs text-slate-200">
+                <option value="1-2 Acres">Small (1-2 Acres)</option>
+                <option value="2-5 Acres" selected>Medium (2-5 Acres)</option>
+                <option value="5-10 Acres">Large (5-10 Acres)</option>
+              </select>
+            </div>
+            <button onclick="handleFullSignup()" class="w-full py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold transition">
+              Create Account & Launch →
+            </button>
           </div>
         </div>
-
-        <div class="grid grid-cols-2 gap-3">
-          <div>
-            <label class="text-xs font-semibold text-slate-300 block mb-1">Farm Land Size</label>
-            <select id="signupLand" class="w-full bg-slate-800/90 border border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none">
-              <option value="1-2 Acres">Small (1 - 2 Acres)</option>
-              <option value="2-5 Acres" selected>Medium (2 - 5 Acres)</option>
-              <option value="5-10 Acres">Large (5 - 10 Acres)</option>
-              <option value="10+ Acres">Commercial (10+ Acres)</option>
-            </select>
-          </div>
-          <div>
-            <label class="text-xs font-semibold text-slate-300 block mb-1">Water / Irrigation</label>
-            <select id="signupIrrigation" class="w-full bg-slate-800/90 border border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none">
-              <option value="Drip Irrigation">Drip Irrigation</option>
-              <option value="Tube Well / Borewell">Tube Well / Borewell</option>
-              <option value="Canal Water">Canal Water</option>
-              <option value="Rainfed">Rainfed</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="grid grid-cols-2 gap-3">
-          <div>
-            <label class="text-xs font-semibold text-slate-300 block mb-1">State / Region</label>
-            <select id="signupRegion" class="w-full bg-slate-800/90 border border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none">
-              <option value="Punjab">Punjab</option>
-              <option value="Haryana">Haryana</option>
-              <option value="Maharashtra">Maharashtra</option>
-              <option value="Karnataka">Karnataka</option>
-              <option value="Uttar Pradesh">Uttar Pradesh</option>
-              <option value="Gujarat">Gujarat</option>
-            </select>
-          </div>
-          <div>
-            <label class="text-xs font-semibold text-slate-300 block mb-1">Primary Crop</label>
-            <select id="signupCrop" class="w-full bg-slate-800/90 border border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none">
-              <option value="wheat">Wheat (गेहूँ)</option>
-              <option value="rice">Rice (धान)</option>
-              <option value="cotton">Cotton (कपास)</option>
-              <option value="soybean">Soybean (सोयाबीन)</option>
-              <option value="tomato">Tomato (टमाटर)</option>
-            </select>
-          </div>
-        </div>
-
-        <button onclick="handleFullSignup()" class="w-full py-3 bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 text-white rounded-xl text-sm font-bold transition shadow-lg glow-green flex items-center justify-center space-x-2 mt-4 cursor-pointer">
-          <i class="fa-solid fa-user-check"></i>
-          <span>Create Account & Start Farm Setup</span>
-        </button>
       </div>
+    </div>
 
-      <div class="text-center pt-2">
-        <span class="text-[11px] text-slate-400">⚡ Instant IoT Microcontroller Sync (ESP32 Live)</span>
-      </div>
+    <!-- Bottom Footer Tagline -->
+    <div class="w-full text-center pb-4 text-xs text-slate-400 flex items-center justify-center space-x-1.5">
+      <i class="fa-solid fa-circle-check text-emerald-400 text-xs"></i>
+      <span>Trusted by 50,000+ farmers across India</span>
     </div>
   </div>
 
@@ -1254,44 +1256,28 @@
       }
     }
 
-    function switchAuthMode(mode) {
-      const tabLogin = document.getElementById('authTabLogin');
-      const tabSignup = document.getElementById('authTabSignup');
-      const formLogin = document.getElementById('authLoginForm');
-      const formSignup = document.getElementById('authSignupForm');
+    function showAuthForm(type) {
+      document.getElementById('authHeroButtons').classList.add('hidden');
+      document.getElementById('authInteractivePanel').classList.remove('hidden');
 
-      if (mode === 'signup') {
-        tabSignup.className = 'flex-1 py-2 rounded-lg bg-emerald-600 text-white transition flex items-center justify-center space-x-1.5 shadow';
-        tabLogin.className = 'flex-1 py-2 rounded-lg text-slate-400 hover:text-white transition flex items-center justify-center space-x-1.5';
-        formLogin.classList.add('hidden');
-        formSignup.classList.remove('hidden');
+      const loginForm = document.getElementById('authLoginForm');
+      const signupForm = document.getElementById('authSignupForm');
+      const title = document.getElementById('authPanelTitle');
+
+      if (type === 'signup') {
+        title.innerText = 'New Farmer Registration (Sign Up)';
+        loginForm.classList.add('hidden');
+        signupForm.classList.remove('hidden');
       } else {
-        tabLogin.className = 'flex-1 py-2 rounded-lg bg-emerald-600 text-white transition flex items-center justify-center space-x-1.5 shadow';
-        tabSignup.className = 'flex-1 py-2 rounded-lg text-slate-400 hover:text-white transition flex items-center justify-center space-x-1.5';
-        formSignup.classList.add('hidden');
-        formLogin.classList.remove('hidden');
+        title.innerText = 'Existing Farmer Login';
+        signupForm.classList.add('hidden');
+        loginForm.classList.remove('hidden');
       }
     }
 
-    function handleFullSignup() {
-      const name = document.getElementById('signupName').value.trim() || 'New Kisan Member';
-      const email = document.getElementById('signupEmail').value.trim();
-      const region = document.getElementById('signupRegion').value;
-      const crop = document.getElementById('signupCrop').value;
-      const land = document.getElementById('signupLand').value;
-
-      localStorage.setItem('krishi_farmer_name', name);
-      localStorage.setItem('krishi_is_logged_in', 'true');
-      localStorage.setItem('krishi_farmer_email', email || 'farmer@krishi.in');
-      localStorage.setItem('krishi_farmer_land', land);
-
-      document.getElementById('regionSelect').value = region;
-      document.getElementById('cropSelect').value = crop;
-
-      // Close auth screen and load farm dashboard
-      document.getElementById('fullAuthScreen').classList.add('hidden');
-      initFarmerProfile();
-      refreshAll();
+    function hideAuthForm() {
+      document.getElementById('authInteractivePanel').classList.add('hidden');
+      document.getElementById('authHeroButtons').classList.remove('hidden');
     }
 
     // Farmer Profile & Auth Management
@@ -1299,8 +1285,10 @@
       const isLoggedIn = localStorage.getItem('krishi_is_logged_in');
       const authScreen = document.getElementById('fullAuthScreen');
 
+      // If user is not logged in, first page is ALWAYS the Krishi App Welcome Screen
       if (isLoggedIn === 'false') {
         authScreen.classList.remove('hidden');
+        hideAuthForm(); // Ensure clean hero state with 'Get Started' & 'Login' buttons
       } else {
         authScreen.classList.add('hidden');
       }
@@ -1323,8 +1311,9 @@
       localStorage.setItem('krishi_is_logged_in', 'false');
       // 2. Close profile modal
       document.getElementById('profileModal').classList.add('hidden');
-      // 3. Show full dedicated Login/Auth screen
+      // 3. Show full dedicated Krishi App Welcome Hero Screen
       document.getElementById('fullAuthScreen').classList.remove('hidden');
+      hideAuthForm();
     }
 
     function handleFullLogin() {
