@@ -736,6 +736,11 @@
     // Initial load
     initTheme();
     refreshAll();
+
+    // ⚡ Real-Time Live Auto-Polling (Har 2.5 second me bina refresh kiye live data update)
+    setInterval(() => {
+      fetchSensors();
+    }, 2500);
   </script>
 </body>
 </html>
