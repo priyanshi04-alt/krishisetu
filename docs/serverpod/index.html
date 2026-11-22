@@ -255,8 +255,8 @@
             <i class="fa-solid fa-plant-wilt"></i>
           </div>
           <span class="text-xs text-slate-400 font-medium">Soil Moisture</span>
-          <div class="text-2xl font-extrabold text-emerald-400 mt-1" id="sensorSoil">58 %</div>
-          <span class="text-[10px] text-emerald-400 mt-1">Adequate</span>
+          <div class="text-2xl font-extrabold text-emerald-400 mt-1" id="sensorSoil">0 %</div>
+          <span class="text-[10px] text-amber-400 mt-1" id="sensorSoilStatus">Dry / In Air</span>
         </div>
 
         <!-- Soil pH -->
@@ -474,11 +474,29 @@
         const res = await fetch(`${API_BASE}/api/data`);
         if (res.ok) {
           const data = await res.json();
-          if (data.temperature) document.getElementById('sensorTemp').innerText = data.temperature + ' °C';
-          if (data.humidity) document.getElementById('sensorHumidity').innerText = data.humidity + ' %';
-          if (data.soilPercent) document.getElementById('sensorSoil').innerText = data.soilPercent + ' %';
-          if (data.ph) document.getElementById('sensorPh').innerText = data.ph;
-          if (data.ldrRaw) document.getElementById('sensorLight').innerText = data.ldrRaw + ' lx';
+          if (data.temperature !== undefined && data.temperature !== null) document.getElementById('sensorTemp').innerText = data.temperature + ' °C';
+          if (data.humidity !== undefined && data.humidity !== null) document.getElementById('sensorHumidity').innerText = data.humidity + ' %';
+          if (data.soilPercent !== undefined && data.soilPercent !== null) {
+            document.getElementById('sensorSoil').innerText = data.soilPercent + ' %';
+            const soilStatus = document.getElementById('sensorSoilStatus');
+            if (soilStatus) {
+              if (data.soilPercent === 0 || data.soilPercent < 15) {
+                soilStatus.innerText = 'Dry / In Air';
+                soilStatus.className = 'text-[10px] text-amber-400 mt-1';
+              } else if (data.soilPercent < 30) {
+                soilStatus.innerText = 'Needs Water';
+                soilStatus.className = 'text-[10px] text-amber-400 mt-1';
+              } else if (data.soilPercent <= 70) {
+                soilStatus.innerText = 'Adequate';
+                soilStatus.className = 'text-[10px] text-emerald-400 mt-1';
+              } else {
+                soilStatus.innerText = 'Very Wet';
+                soilStatus.className = 'text-[10px] text-blue-400 mt-1';
+              }
+            }
+          }
+          if (data.ph !== undefined && data.ph !== null) document.getElementById('sensorPh').innerText = data.ph;
+          if (data.ldrRaw !== undefined && data.ldrRaw !== null) document.getElementById('sensorLight').innerText = data.ldrRaw + ' lx';
           if (data.waterLevel !== undefined) document.getElementById('sensorWater').innerText = data.waterLevel ? 'Full' : 'Low';
         }
       } catch (e) {
