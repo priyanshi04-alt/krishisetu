@@ -3,12 +3,25 @@ require('dotenv').config();
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user.model');
+const { isDbConnected } = require('../config/db');
 
 const router = express.Router();
 const JWT_SECRET = process.env.JWT_SECRET || 'krishi_jwt_secret_2024';
 
+// Middleware to ensure database is available for authentication persistence
+function requireDatabase(req, res, next) {
+  if (!isDbConnected()) {
+    return res.status(503).json({
+      error: 'Database service unavailable. Persistent authentication is temporarily disabled.',
+      service: 'MongoDB',
+      status: 'DISCONNECTED',
+    });
+  }
+  next();
+}
+
 // ── POST /api/auth/signup ─────────────────────────────────────────────────────
-router.post('/signup', async (req, res) => {
+router.post('/signup', requireDatabase, async (req, res) => {
   try {
     const {
       email, password, name, age, region,
@@ -52,7 +65,7 @@ router.post('/signup', async (req, res) => {
 });
 
 // ── POST /api/auth/login ──────────────────────────────────────────────────────
-router.post('/login', async (req, res) => {
+router.post('/login', requireDatabase, async (req, res) => {
   try {
     const { email, password } = req.body;
 

@@ -3,7 +3,7 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
-const connectDB = require('./config/db');
+const { connectDB, getDbStatus } = require('./config/db');
 const sensorRoutes = require('./routes/sensor.routes');
 const controlRoutes = require('./routes/control.routes');
 const authRoutes   = require('./routes/auth.routes');
@@ -42,7 +42,20 @@ app.use(express.static(path.join(__dirname, '../public')));
 
 // ── Health check ──────────────────────────────────────────────────────────────
 app.get('/api/status', (req, res) => {
-  res.json({ status: 'Krishi backend running', version: '1.0.0' });
+  res.json({
+    status: 'Krishi backend running',
+    version: '1.0.0',
+    express: 'UP',
+    database: {
+      provider: 'MongoDB',
+      status: getDbStatus(),
+      critical: false,
+    },
+    hardware: {
+      target: process.env.ESP_BASE_URL || 'http://192.168.4.1',
+      protocol: 'HTTP',
+    },
+  });
 });
 
 app.get('/', (req, res) => {
