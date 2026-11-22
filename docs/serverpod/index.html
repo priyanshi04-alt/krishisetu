@@ -1305,24 +1305,52 @@
       document.getElementById('authHeroButtons').classList.remove('hidden');
     }
 
+    function handleFullSignup() {
+      const nameInput = document.getElementById('signupName');
+      const regionInput = document.getElementById('signupRegion');
+      const cropInput = document.getElementById('signupCrop');
+      const landInput = document.getElementById('signupLand');
+
+      const name = (nameInput && nameInput.value.trim()) ? nameInput.value.trim() : 'Suresh Patel';
+      const region = (regionInput) ? regionInput.value : 'Punjab';
+      const crop = (cropInput) ? cropInput.value : 'wheat';
+      const land = (landInput) ? landInput.value : '2-5 Acres';
+
+      localStorage.setItem('krishi_farmer_name', name);
+      localStorage.setItem('krishi_farmer_land', land);
+      localStorage.setItem('krishi_is_logged_in', 'true');
+
+      if (document.getElementById('regionSelect')) document.getElementById('regionSelect').value = region;
+      if (document.getElementById('cropSelect')) document.getElementById('cropSelect').value = crop;
+
+      // Close auth welcome screen and load farm dashboard
+      document.getElementById('fullAuthScreen').classList.add('hidden');
+      initFarmerProfile();
+      refreshAll();
+    }
+
     // Farmer Profile & Auth Management
     function initFarmerProfile() {
       const isLoggedIn = localStorage.getItem('krishi_is_logged_in');
       const authScreen = document.getElementById('fullAuthScreen');
 
-      // If user is not logged in, first page is ALWAYS the Krishi App Welcome Screen
-      if (isLoggedIn === 'false') {
+      // FIRST PAGE IS ALWAYS THE EXACT KRISHI APP WELCOME SCREEN UNLESS USER LOGGED IN
+      if (isLoggedIn !== 'true') {
         authScreen.classList.remove('hidden');
-        hideAuthForm(); // Ensure clean hero state with 'Get Started' & 'Login' buttons
+        hideAuthForm(); // Guarantees the exact original hero screen from the photo
       } else {
         authScreen.classList.add('hidden');
       }
 
       const storedName = localStorage.getItem('krishi_farmer_name') || 'Ramesh Kumar (Farmer)';
-      document.getElementById('currentFarmerName').innerText = storedName;
-      document.getElementById('profileModalName').innerText = storedName;
-      document.getElementById('profileModalRegion').innerText = document.getElementById('regionSelect').value;
-      document.getElementById('profileModalCrop').innerText = document.getElementById('cropSelect').options[document.getElementById('cropSelect').selectedIndex].text;
+      if (document.getElementById('currentFarmerName')) document.getElementById('currentFarmerName').innerText = storedName;
+      if (document.getElementById('profileModalName')) document.getElementById('profileModalName').innerText = storedName;
+      if (document.getElementById('regionSelect') && document.getElementById('profileModalRegion')) {
+        document.getElementById('profileModalRegion').innerText = document.getElementById('regionSelect').value;
+      }
+      if (document.getElementById('cropSelect') && document.getElementById('profileModalCrop')) {
+        document.getElementById('profileModalCrop').innerText = document.getElementById('cropSelect').options[document.getElementById('cropSelect').selectedIndex].text;
+      }
     }
 
     function toggleProfileDrawer() {
