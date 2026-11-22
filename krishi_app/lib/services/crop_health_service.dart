@@ -3,7 +3,7 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
-String get _baseUrl => 'https://setu-backend-jixd.onrender.com';
+String get _baseUrl => 'https://krishisetu.api.serverpod.space';
 
 class HealthMetric {
   final int score;

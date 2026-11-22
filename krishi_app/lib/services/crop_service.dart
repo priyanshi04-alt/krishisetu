@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'sensor_service.dart';
 
-String get _baseUrl => 'https://setu-backend-jixd.onrender.com';
+String get _baseUrl => 'https://krishisetu.api.serverpod.space';
 
 class CropRecommendation {
   final String name;

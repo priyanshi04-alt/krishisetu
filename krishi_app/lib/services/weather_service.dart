@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:http/http.dart' as http;
 
-String get _baseUrl => 'https://setu-backend-jixd.onrender.com';
+String get _baseUrl => 'https://krishisetu.api.serverpod.space';
 
 class WeatherData {
   final String region;
