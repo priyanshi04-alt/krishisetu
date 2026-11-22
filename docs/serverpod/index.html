@@ -197,90 +197,89 @@
 <body class="text-slate-100 min-h-screen flex flex-col">
 
   <!-- FULL SCREEN DEDICATED LOGIN / WELCOME SCREEN (When Logged Out) -->
-  <div id="fullAuthScreen" class="fixed inset-0 z-[100] bg-[#060E08] flex flex-col justify-between items-center p-6 text-white overflow-y-auto hidden">
-    <!-- Top Header Bar of App Welcome -->
-    <div class="w-full max-w-2xl flex items-center justify-between pt-2">
+  <div id="fullAuthScreen" class="fixed inset-0 z-[100] bg-[#060E08] flex flex-col justify-between items-center px-6 py-6 text-white overflow-y-auto hidden">
+    <!-- Top Header Bar of App Welcome (Exact Match to Picture) -->
+    <div class="w-full flex items-center justify-between pt-2 px-2 sm:px-6">
       <div class="flex items-center space-x-2">
-        <i class="fa-solid fa-leaf text-emerald-400 text-lg"></i>
-        <span class="text-lg font-bold text-slate-100 tracking-wide">KrishiSetu</span>
+        <i class="fa-solid fa-leaf text-[#39FF14] text-xl"></i>
+        <span class="text-xl font-bold text-white tracking-wide">Krishi</span>
       </div>
-      <button onclick="toggleTheme()" class="px-3.5 py-1 rounded-full border border-emerald-500/40 bg-emerald-950/40 text-emerald-300 text-xs font-semibold flex items-center space-x-1.5 hover:bg-emerald-900/50 transition">
+      <button onclick="toggleTheme()" class="px-4 py-1.5 rounded-full border border-emerald-500/50 bg-[#0A1A0F] text-[#39FF14] text-xs font-semibold flex items-center space-x-1.5 hover:bg-emerald-950 transition cursor-pointer">
         <i class="fa-solid fa-sun text-amber-300 text-xs"></i>
         <span>Light</span>
       </button>
     </div>
 
     <!-- Center Hero Branding Content -->
-    <div class="w-full max-w-md mx-auto my-auto py-8 text-center space-y-6">
+    <div class="w-full max-w-xl mx-auto my-auto py-6 text-center space-y-6">
       <!-- Badge: Smart Farming Platform -->
-      <div class="inline-flex items-center space-x-2 px-3.5 py-1 rounded-full bg-emerald-950/80 border border-emerald-500/30 text-emerald-400 text-xs font-medium">
-        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+      <div class="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full bg-[#0D2214] border border-emerald-500/40 text-[#39FF14] text-xs font-semibold">
+        <span class="w-2 h-2 rounded-full bg-[#39FF14] animate-pulse"></span>
         <span>Smart Farming Platform</span>
       </div>
 
       <!-- Main Headline -->
-      <div class="space-y-2">
-        <h1 class="text-4xl md:text-5xl font-extrabold text-emerald-400 tracking-tight">
-          Krishi Setu
+      <div class="space-y-3">
+        <h1 class="text-5xl sm:text-6xl font-extrabold text-[#39FF14] tracking-tight">
+          Krishi App
         </h1>
-        <p class="text-slate-300 text-base md:text-lg font-medium">
+        <p class="text-slate-300 text-lg sm:text-xl font-normal leading-relaxed">
           Smart Farming for<br>Every Farmer
         </p>
       </div>
 
-      <!-- Feature Tags Row -->
-      <div class="flex flex-wrap items-center justify-center gap-2 pt-2">
-        <span class="px-3 py-1 rounded-full bg-slate-900/80 border border-slate-800 text-[11px] text-slate-300 flex items-center space-x-1.5">
-          <i class="fa-solid fa-sun text-emerald-400 text-xs"></i>
+      <!-- Feature Tags Row (Pills with exact border & color) -->
+      <div class="flex flex-wrap items-center justify-center gap-2.5 pt-2">
+        <span class="px-3.5 py-1.5 rounded-full bg-[#0A1A0F] border border-emerald-800/60 text-xs text-slate-300 flex items-center space-x-2">
+          <i class="fa-solid fa-sun text-[#39FF14] text-xs"></i>
           <span>Weather AI</span>
         </span>
-        <span class="px-3 py-1 rounded-full bg-slate-900/80 border border-slate-800 text-[11px] text-slate-300 flex items-center space-x-1.5">
-          <i class="fa-solid fa-droplet text-emerald-400 text-xs"></i>
+        <span class="px-3.5 py-1.5 rounded-full bg-[#0A1A0F] border border-emerald-800/60 text-xs text-slate-300 flex items-center space-x-2">
+          <i class="fa-solid fa-droplet text-[#39FF14] text-xs"></i>
           <span>Irrigation</span>
         </span>
-        <span class="px-3 py-1 rounded-full bg-slate-900/80 border border-slate-800 text-[11px] text-slate-300 flex items-center space-x-1.5">
-          <i class="fa-solid fa-chart-simple text-emerald-400 text-xs"></i>
+        <span class="px-3.5 py-1.5 rounded-full bg-[#0A1A0F] border border-emerald-800/60 text-xs text-slate-300 flex items-center space-x-2">
+          <i class="fa-solid fa-chart-simple text-[#39FF14] text-xs"></i>
           <span>Crop Analytics</span>
         </span>
-        <span class="px-3 py-1 rounded-full bg-slate-900/80 border border-slate-800 text-[11px] text-slate-300 flex items-center space-x-1.5">
-          <i class="fa-solid fa-bell text-emerald-400 text-xs"></i>
+        <span class="px-3.5 py-1.5 rounded-full bg-[#0A1A0F] border border-emerald-800/60 text-xs text-slate-300 flex items-center space-x-2">
+          <i class="fa-solid fa-bell text-[#39FF14] text-xs"></i>
           <span>Smart Alerts</span>
         </span>
       </div>
 
-      <!-- Action Buttons & Panels Container -->
-      <div class="pt-4 space-y-3">
-        <!-- Main Hero Action Buttons (Exact Match to App Screenshot) -->
-        <div id="authHeroButtons" class="space-y-3">
-          <button onclick="showAuthForm('signup')" class="w-full py-3.5 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-base transition shadow-lg glow-green flex items-center justify-center space-x-2 cursor-pointer">
+      <!-- Hero Action Buttons (Exact shape, full width curved pill, neon vibrant glow) -->
+      <div class="pt-6 space-y-4 max-w-lg mx-auto">
+        <div id="authHeroButtons" class="space-y-3.5">
+          <button onclick="showAuthForm('signup')" class="w-full py-4 rounded-full bg-[#39FF14] hover:bg-[#32e012] text-black font-extrabold text-base transition shadow-[0_0_30px_rgba(57,255,20,0.4)] flex items-center justify-center space-x-2 cursor-pointer">
             <span>→ Get Started</span>
           </button>
-          <button onclick="showAuthForm('login')" class="w-full py-3.5 rounded-2xl bg-transparent hover:bg-emerald-950/40 border-2 border-emerald-500/70 text-emerald-400 font-bold text-base transition flex items-center justify-center cursor-pointer">
+          <button onclick="showAuthForm('login')" class="w-full py-4 rounded-full bg-transparent hover:bg-emerald-950/40 border-2 border-[#39FF14]/80 text-[#39FF14] font-extrabold text-base transition flex items-center justify-center cursor-pointer">
             <span>Login to Account</span>
           </button>
         </div>
 
         <!-- Embedded Interactive Login/Signup Panel -->
-        <div id="authInteractivePanel" class="hidden glass-card p-5 rounded-2xl border border-slate-700 text-left space-y-4">
+        <div id="authInteractivePanel" class="hidden glass-card p-6 rounded-3xl border border-emerald-500/30 text-left space-y-4">
           <div class="flex items-center justify-between pb-2 border-b border-slate-700/60">
-            <h4 class="text-sm font-bold text-emerald-400" id="authPanelTitle">Farmer Login</h4>
-            <button onclick="hideAuthForm()" class="text-xs text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i> Back</button>
+            <h4 class="text-sm font-bold text-[#39FF14]" id="authPanelTitle">Farmer Login</h4>
+            <button onclick="hideAuthForm()" class="text-xs text-slate-400 hover:text-white cursor-pointer"><i class="fa-solid fa-xmark"></i> Back</button>
           </div>
 
           <!-- Existing Farmer Form -->
           <div id="authLoginForm" class="space-y-3 text-xs">
             <div>
               <label class="font-semibold text-slate-300 block mb-1">Kisan Name / ID</label>
-              <input type="text" id="authFarmerName" value="Ramesh Kumar (Farmer)" class="w-full bg-slate-800/90 border border-slate-700 rounded-xl px-3 py-2 text-slate-100 focus:outline-none focus:border-emerald-500" placeholder="e.g. Ramesh Kumar">
+              <input type="text" id="authFarmerName" value="Ramesh Kumar (Farmer)" class="w-full bg-[#0A1A0F] border border-slate-700 rounded-xl px-3 py-2.5 text-slate-100 focus:outline-none focus:border-[#39FF14]" placeholder="e.g. Ramesh Kumar">
             </div>
             <div>
               <label class="font-semibold text-slate-300 block mb-1">PIN / Password</label>
-              <input type="password" id="authPassword" value="123456" class="w-full bg-slate-800/90 border border-slate-700 rounded-xl px-3 py-2 text-slate-100 focus:outline-none focus:border-emerald-500" placeholder="Password">
+              <input type="password" id="authPassword" value="123456" class="w-full bg-[#0A1A0F] border border-slate-700 rounded-xl px-3 py-2.5 text-slate-100 focus:outline-none focus:border-[#39FF14]" placeholder="Password">
             </div>
             <div class="grid grid-cols-2 gap-2">
               <div>
                 <label class="text-[10px] text-slate-400 block mb-0.5">Region</label>
-                <select id="authRegion" class="w-full bg-slate-800/90 border border-slate-700 rounded-lg px-2 py-1.5 text-xs text-slate-200 focus:outline-none">
+                <select id="authRegion" class="w-full bg-[#0A1A0F] border border-slate-700 rounded-lg px-2 py-1.5 text-xs text-slate-200 focus:outline-none">
                   <option value="Punjab">Punjab</option>
                   <option value="Haryana">Haryana</option>
                   <option value="Maharashtra">Maharashtra</option>
@@ -290,14 +289,14 @@
               </div>
               <div>
                 <label class="text-[10px] text-slate-400 block mb-0.5">Crop</label>
-                <select id="authCrop" class="w-full bg-slate-800/90 border border-slate-700 rounded-lg px-2 py-1.5 text-xs text-slate-200 focus:outline-none">
+                <select id="authCrop" class="w-full bg-[#0A1A0F] border border-slate-700 rounded-lg px-2 py-1.5 text-xs text-slate-200 focus:outline-none">
                   <option value="rice">Rice (धान)</option>
                   <option value="wheat">Wheat (गेहूँ)</option>
                   <option value="cotton">Cotton (कपास)</option>
                 </select>
               </div>
             </div>
-            <button onclick="handleFullLogin()" class="w-full py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold transition">
+            <button onclick="handleFullLogin()" class="w-full py-3 rounded-full bg-[#39FF14] hover:bg-[#32e012] text-black font-extrabold text-sm transition mt-2 cursor-pointer">
               Sign In to Farm Dashboard →
             </button>
           </div>
@@ -306,12 +305,12 @@
           <div id="authSignupForm" class="space-y-3 text-xs hidden">
             <div>
               <label class="font-semibold text-slate-300 block mb-1">Full Name</label>
-              <input type="text" id="signupName" class="w-full bg-slate-800/90 border border-slate-700 rounded-xl px-3 py-2 text-slate-100 focus:outline-none focus:border-emerald-500" placeholder="e.g. Suresh Patel">
+              <input type="text" id="signupName" class="w-full bg-[#0A1A0F] border border-slate-700 rounded-xl px-3 py-2.5 text-slate-100 focus:outline-none focus:border-[#39FF14]" placeholder="e.g. Suresh Patel">
             </div>
             <div class="grid grid-cols-2 gap-2">
               <div>
                 <label class="font-semibold text-slate-300 block mb-1">State</label>
-                <select id="signupRegion" class="w-full bg-slate-800/90 border border-slate-700 rounded-lg px-2 py-1.5 text-xs text-slate-200">
+                <select id="signupRegion" class="w-full bg-[#0A1A0F] border border-slate-700 rounded-lg px-2 py-1.5 text-xs text-slate-200">
                   <option value="Punjab">Punjab</option>
                   <option value="Haryana">Haryana</option>
                   <option value="Maharashtra">Maharashtra</option>
@@ -321,7 +320,7 @@
               </div>
               <div>
                 <label class="font-semibold text-slate-300 block mb-1">Crop</label>
-                <select id="signupCrop" class="w-full bg-slate-800/90 border border-slate-700 rounded-lg px-2 py-1.5 text-xs text-slate-200">
+                <select id="signupCrop" class="w-full bg-[#0A1A0F] border border-slate-700 rounded-lg px-2 py-1.5 text-xs text-slate-200">
                   <option value="wheat">Wheat (गेहूँ)</option>
                   <option value="rice">Rice (धान)</option>
                   <option value="cotton">Cotton (कपास)</option>
@@ -330,13 +329,13 @@
             </div>
             <div>
               <label class="font-semibold text-slate-300 block mb-1">Farm Land Size</label>
-              <select id="signupLand" class="w-full bg-slate-800/90 border border-slate-700 rounded-lg px-2 py-1.5 text-xs text-slate-200">
+              <select id="signupLand" class="w-full bg-[#0A1A0F] border border-slate-700 rounded-lg px-2 py-1.5 text-xs text-slate-200">
                 <option value="1-2 Acres">Small (1-2 Acres)</option>
                 <option value="2-5 Acres" selected>Medium (2-5 Acres)</option>
                 <option value="5-10 Acres">Large (5-10 Acres)</option>
               </select>
             </div>
-            <button onclick="handleFullSignup()" class="w-full py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold transition">
+            <button onclick="handleFullSignup()" class="w-full py-3 rounded-full bg-[#39FF14] hover:bg-[#32e012] text-black font-extrabold text-sm transition mt-2 cursor-pointer">
               Create Account & Launch →
             </button>
           </div>
@@ -344,9 +343,9 @@
       </div>
     </div>
 
-    <!-- Bottom Footer Tagline -->
-    <div class="w-full text-center pb-4 text-xs text-slate-400 flex items-center justify-center space-x-1.5">
-      <i class="fa-solid fa-circle-check text-emerald-400 text-xs"></i>
+    <!-- Bottom Footer Tagline (Exact to Photo) -->
+    <div class="w-full text-center pb-3 text-xs text-slate-400 flex items-center justify-center space-x-2">
+      <i class="fa-solid fa-circle-check text-[#39FF14] text-xs"></i>
       <span>Trusted by 50,000+ farmers across India</span>
     </div>
   </div>
