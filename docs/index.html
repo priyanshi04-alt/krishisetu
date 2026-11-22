@@ -192,6 +192,52 @@
         gap: 0.65rem !important;
       }
     }
+
+    /* Light Mode Adaptation for Krishi App Welcome Screen */
+    body.light-mode #fullAuthScreen {
+      background-color: #f0fdf4 !important;
+      color: #0f172a !important;
+    }
+    body.light-mode #fullAuthScreen .text-white {
+      color: #0f172a !important;
+    }
+    body.light-mode #fullAuthScreen .text-slate-300 {
+      color: #334155 !important;
+    }
+    body.light-mode #fullAuthScreen .text-slate-400 {
+      color: #64748b !important;
+    }
+    body.light-mode #fullAuthScreen .bg-\[\#0A1A0F\] {
+      background-color: #ffffff !important;
+      border-color: #bbf7d0 !important;
+      color: #1e293b !important;
+    }
+    body.light-mode #fullAuthScreen .bg-\[\#0D2214\] {
+      background-color: #dcfce7 !important;
+      border-color: #86efac !important;
+      color: #15803d !important;
+    }
+    body.light-mode #fullAuthScreen .border-emerald-800\/60 {
+      border-color: #bbf7d0 !important;
+      background-color: #ffffff !important;
+      color: #1e293b !important;
+    }
+    body.light-mode #fullAuthScreen .text-\[\#39FF14\],
+    body.light-mode #fullAuthScreen .text-emerald-400 {
+      color: #16a34a !important; /* Rich natural emerald in sync with light mode */
+    }
+    body.light-mode #fullAuthScreen .bg-\[\#39FF14\] {
+      background-color: #16a34a !important; /* Cohesive emerald green */
+      color: #ffffff !important;
+      box-shadow: 0 10px 25px -5px rgba(22, 163, 74, 0.35) !important;
+    }
+    body.light-mode #fullAuthScreen .border-\[\#39FF14\]\/80 {
+      border-color: #16a34a !important;
+      color: #16a34a !important;
+    }
+    body.light-mode #fullAuthScreen .border-\[\#39FF14\]\/80:hover {
+      background-color: #dcfce7 !important;
+    }
   </style>
 </head>
 <body class="text-slate-100 min-h-screen flex flex-col">
@@ -1214,7 +1260,10 @@
     // Theme Management (Light / Dark Mode)
     function initTheme() {
       const savedTheme = localStorage.getItem('krishi_theme');
-      if (savedTheme === 'light') {
+      // Default to LIGHT / WHITE mode unless explicitly set to dark
+      if (savedTheme === 'dark') {
+        enableDarkMode();
+      } else {
         enableLightMode();
       }
     }
