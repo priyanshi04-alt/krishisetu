@@ -77937,11 +77937,7 @@ ak(){return new A.xd(new A.L3(B.yd,$.am()))}}
 A.xd.prototype={
 uM(){var s=0,r=A.P(t.H),q=1,p=[],o=this,n,m,l,k,j
 var $async$uM=A.Q(function(a,b){if(a===1){p.push(b)
-s=q}for(;;)switch(s){case 0:q=3
-l=$.U2.b4().cx
-l===$&&A.a()
-s=6
-return A.S(Promise.resolve({a:"Hello " + (o.f.a.a || "Friend") + "! Welcome to KrishiSetu"}),$async$uM)
+s=q}for(;;)switch(s){case 0:o.aq(new A.a4Q(o,{a:"Hello " + (o.f.a.a || "Friend") + "! Welcome to KrishiSetu"}));return A.N(null,r)
 case 6:n=b
 o.aq(new A.a4Q(o,n))
 q=1
